@@ -32,25 +32,23 @@ app.use(cors({
 }));
 app.use(express.json());
 
-// Serve static files from React build
-if (process.env.NODE_ENV === 'production') {
-  app.use(express.static(path.join(__dirname, 'client/build')));
-}
-
-// Basic route
-app.get('/', (req, res) => {
-  res.json({ message: 'Hardware Selection API is running' });
-});
-
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/data', dataRoutes);
 app.use('/api/auth', resetRoutes);
 
-// Serve React app for any non-API routes in production
+// Serve static files from React build
 if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'client/build')));
+  
+  // Serve React app for any non-API routes in production
   app.get('*', (req, res) => {
     res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+  });
+} else {
+  // Basic route for development
+  app.get('/', (req, res) => {
+    res.json({ message: 'Hardware Selection API is running' });
   });
 }
 
