@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hardware Selection</title>
+    <style>
+        body { font-family: Arial; padding: 20px; }
+        .form-group { margin: 10px 0; }
+        input, select, button { padding: 10px; margin: 5px; width: 200px; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h2>Hardware Selection System</h2>
+    
+    <div id="loginForm">
+        <h3>Login</h3>
+        <div class="form-group">
+            <input type="text" id="username" placeholder="Username">
+        </div>
+        <div class="form-group">
+            <input type="password" id="password" placeholder="Password">
+        </div>
+        <button onclick="login()">Login</button>
+        <button onclick="showRegister()">Register</button>
+    </div>
+
+    <div id="registerForm" style="display:none;">
+        <h3>Register</h3>
+        <input type="text" id="fullName" placeholder="Full Name"><br>
+        <input type="email" id="email" placeholder="Email"><br>
+        <input type="text" id="regUsername" placeholder="Username"><br>
+        <input type="password" id="regPassword" placeholder="Password"><br>
+        <button onclick="register()">Register</button>
+        <button onclick="showLogin()">Back to Login</button>
+    </div>
+
+    <div id="selectionForm" style="display:none;">
+        <h3>Select Hardware</h3>
+        <select id="brand" onchange="updateHardware()">
+            <option value="">Select Brand</option>
+            <option value="Allegion">Allegion</option>
+            <option value="Assa Abloy">Assa Abloy</option>
+            <option value="Hager">Hager</option>
+            <option value="Best/Dormakaba">Best/Dormakaba</option>
+        </select><br>
+        <select id="hardware">
+            <option value="">Select Hardware Type</option>
+        </select><br>
+        <select id="location" style="display:none;">
+            <option value="">Select Location</option>
+        </select><br>
+        <button onclick="getResults()">Get Results</button>
+        <button onclick="logout()">Logout</button>
+    </div>
+
+    <div id="results" style="display:none;">
+        <h3>Results</h3>
+        <div id="resultsList"></div>
+        <button onclick="goBack()">Back</button>
+    </div>
+
+    <script>
+        function showRegister() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('registerForm').style.display = 'block';
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+
+        function login() {
+            document.getElementById('loginForm').style.display = 'none';
+            document.getElementById('selectionForm').style.display = 'block';
+        }
+
+        function register() {
+            alert('Registration successful!');
+            showLogin();
+        }
+
+        function updateHardware() {
+            const brand = document.getElementById('brand').value;
+            const hardware = document.getElementById('hardware');
+            const location = document.getElementById('location');
+            
+            hardware.innerHTML = '<option value="">Select Hardware Type</option>';
+            
+            if (brand === 'Allegion') {
+                hardware.innerHTML += '<option value="Allegion Standard Hardware">Allegion Standard Hardware</option>';
+                hardware.innerHTML += '<option value="Allegion Economical Hardware">Allegion Economical Hardware</option>';
+                hardware.innerHTML += '<option value="Allegion Residential Hardware">Allegion Residential Hardware</option>';
+                location.style.display = 'block';
+                location.innerHTML = '<option value="">Select Location</option><option value="Building Entry (Exterior)">Building Entry (Exterior)</option><option value="Amenity (Interior)">Amenity (Interior)</option>';
+            } else if (brand) {
+                hardware.innerHTML += `<option value="${brand} Standard Hardware">${brand} Standard Hardware</option>`;
+                hardware.innerHTML += `<option value="${brand} Economical Hardware">${brand} Economical Hardware</option>`;
+                hardware.innerHTML += `<option value="${brand} Residential Hardware">${brand} Residential Hardware</option>`;
+                location.style.display = 'none';
+            }
+        }
+
+        function getResults() {
+            document.getElementById('selectionForm').style.display = 'none';
+            document.getElementById('results').style.display = 'block';
+            document.getElementById('resultsList').innerHTML = '<p>Sample hardware result for your selection</p>';
+        }
+
+        function goBack() {
+            document.getElementById('results').style.display = 'none';
+            document.getElementById('selectionForm').style.display = 'block';
+        }
+
+        function logout() {
+            document.getElementById('selectionForm').style.display = 'none';
+            document.getElementById('loginForm').style.display = 'block';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+const express = require('express');
+const mongoose = require('mongoose');
+const cors = require('cors');
+const path = require('path');
+require('dotenv').config();
+
+// Environment variables for production
+if (process.env.NODE_ENV === 'production') {
+  process.env.MONGODB_URI = process.env.MONGODB_URI || 'mongodb://localhost:27017/hardware_selection';
+  process.env.JWT_SECRET = process.env.JWT_SECRET || 'hardwareSelectionSecretKey2024ProjectFinal';
+  process.env.PORT = process.env.PORT || '5000';
+}
+
+const authRoutes = require('./routes/auth');
+const dataRoutes = require('./routes/data');
+const resetRoutes = require('./routes/reset-password');
+
+const app = express();
+
+// Middleware
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' 
+    ? [
+        'https://ark2construct-jay.github.io',
+        'https://hardware-selection-system.netlify.app', 
+        'https://*.netlify.app'
+      ]
+    : ['http://localhost:3000', 'http://127.0.0.1:3000'],
+  methods: ['GET', 'POST', 'PUT', 'DELETE'],
+  allowedHeaders: ['Content-Type', 'Authorization'],
+  credentials: true
+}));
+app.use(express.json());
+
+// Serve static files from React build
+if (process.env.NODE_ENV === 'production') {
+  app.use(express.static(path.join(__dirname, 'client/build')));
+}
+
+// Basic route
+app.get('/', (req, res) => {
+  res.json({ message: 'Hardware Selection API is running' });
+});
+
+// Routes
+app.use('/api/auth', authRoutes);
+app.use('/api/data', dataRoutes);
+app.use('/api/auth', resetRoutes);
+
+// Serve React app for any non-API routes in production
+if (process.env.NODE_ENV === 'production') {
+  app.get('*', (req, res) => {
+    res.sendFile(path.join(__dirname, 'client/build', 'index.html'));
+  });
+}
+
+// MongoDB connection with timeout options
+mongoose.connect(process.env.MONGODB_URI || 'mongodb://localhost:27017/hardware_selection', {
+  serverSelectionTimeoutMS: 30000,
+  socketTimeoutMS: 45000,
+  connectTimeoutMS: 30000,
+  maxPoolSize: 10,
+  retryWrites: true
+})
+  .then(() => console.log('MongoDB connected successfully'))
+  .catch(err => {
+    console.error('MongoDB connection failed:', err.message);
+    console.log('Server will continue without database');
+  });
+
+const PORT = process.env.PORT || 5000;
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
+});

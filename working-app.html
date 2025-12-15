@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hardware Selection System</title>
+    <style>
+        body { font-family: Arial; padding: 20px; max-width: 600px; margin: 0 auto; }
+        .form-group { margin: 15px 0; }
+        input, select, button { padding: 12px; margin: 5px; width: 100%; max-width: 300px; }
+        button { background: #007bff; color: white; border: none; cursor: pointer; border-radius: 4px; }
+        button:hover { background: #0056b3; }
+        .hidden { display: none; }
+        .result-item { border: 1px solid #ddd; padding: 15px; margin: 10px 0; border-radius: 4px; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <h1>Hardware Selection System</h1>
+
+    <!-- Login Form -->
+    <div id="loginForm">
+        <h2>Login</h2>
+        <div class="form-group">
+            <input type="text" id="username" placeholder="Username" required>
+        </div>
+        <div class="form-group">
+            <input type="password" id="password" placeholder="Password" required>
+        </div>
+        <button onclick="login()">Login</button>
+        <button onclick="showRegister()">Register</button>
+        <div id="loginError" class="error"></div>
+    </div>
+
+    <!-- Register Form -->
+    <div id="registerForm" class="hidden">
+        <h2>Register</h2>
+        <div class="form-group">
+            <input type="text" id="fullName" placeholder="Full Name" required>
+        </div>
+        <div class="form-group">
+            <input type="email" id="email" placeholder="Email ID" required>
+        </div>
+        <div class="form-group">
+            <input type="text" id="regUsername" placeholder="Create Username" required>
+        </div>
+        <div class="form-group">
+            <input type="password" id="regPassword" placeholder="Create Password" required>
+        </div>
+        <button onclick="register()">Register</button>
+        <button onclick="showLogin()">Back to Login</button>
+        <div id="registerError" class="error"></div>
+        <div id="registerSuccess" class="success"></div>
+    </div>
+
+    <!-- Main Selection Form -->
+    <div id="selectionForm" class="hidden">
+        <h2>Hardware Selection</h2>
+        <button onclick="logout()" style="float: right; width: auto; background: #dc3545;">Logout</button>
+        
+        <div class="form-group">
+            <h3>Step 1: Select Brand</h3>
+            <select id="brand" onchange="updateHardware()">
+                <option value="">Choose a brand...</option>
+                <option value="Allegion">Allegion</option>
+                <option value="Assa Abloy">Assa Abloy</option>
+                <option value="Hager">Hager</option>
+                <option value="Best/Dormakaba">Best/Dormakaba</option>
+            </select>
+        </div>
+
+        <div id="hardwareStep" class="form-group hidden">
+            <h3>Step 2: Select Hardware Type</h3>
+            <select id="hardware" onchange="checkLocation()">
+                <option value="">Choose hardware type...</option>
+            </select>
+        </div>
+
+        <div id="locationStep" class="form-group hidden">
+            <h3>Step 3: Select Location</h3>
+            <select id="location">
+                <option value="">Choose location...</option>
+                <option value="Building Entry (Exterior)">Building Entry (Exterior)</option>
+                <option value="Amenity (Interior)">Amenity (Interior)</option>
+                <option value="Amenity (Exterior)">Amenity (Exterior)</option>
+                <option value="Common Area/Office (Interior)">Common Area/Office (Interior)</option>
+                <option value="Common Area/Office (Exterior)">Common Area/Office (Exterior)</option>
+                <option value="Common Area/Office - Emergency Egress (Interior)">Common Area/Office - Emergency Egress (Interior)</option>
+                <option value="Room Utility (Interior)">Room Utility (Interior)</option>
+                <option value="Room Utility (Exterior)">Room Utility (Exterior)</option>
+                <option value="Room Utility - Emergency Egress (Interior)">Room Utility - Emergency Egress (Interior)</option>
+                <option value="Room Utility - Emergency Egress (Exterior)">Room Utility - Emergency Egress (Exterior)</option>
+                <option value="Closet - Utility (Interior)">Closet - Utility (Interior)</option>
+                <option value="Common Area Bathroom (Interior)">Common Area Bathroom (Interior)</option>
+                <option value="Stair (Interior)">Stair (Interior)</option>
+                <option value="Stair (Exterior)">Stair (Exterior)</option>
+                <option value="Corridor/Hallway/Lobby (Interior)">Corridor/Hallway/Lobby (Interior)</option>
+                <option value="Corridor/Hallway/Lobby - Emergency Egress (Interior)">Corridor/Hallway/Lobby - Emergency Egress (Interior)</option>
+                <option value="Unit Entry - Non-ADA (Interior)">Unit Entry - Non-ADA (Interior)</option>
+                <option value="Unit Entry - ADA (Interior)">Unit Entry - ADA (Interior)</option>
+                <option value="Unit Entry - Non-ADA (Exterior)">Unit Entry - Non-ADA (Exterior)</option>
+                <option value="Unit Entry - ADA (Exterior)">Unit Entry - ADA (Exterior)</option>
+                <option value="Unit - Bed/Bath (Interior)">Unit - Bed/Bath (Interior)</option>
+                <option value="Unit - closet (Interior)">Unit - closet (Interior)</option>
+                <option value="Unit Closet - Utility (Interior)">Unit Closet - Utility (Interior)</option>
+                <option value="Balcony (Exterior)">Balcony (Exterior)</option>
+                <option value="Connecting Door (Interior)">Connecting Door (Interior)</option>
+                <option value="Communicating (Double Acting Door) (Interior)">Communicating (Double Acting Door) (Interior)</option>
+                <option value="Bed/Bath - Pocket door (Interior)">Bed/Bath - Pocket door (Interior)</option>
+                <option value="Closet - Bypass door (Interior)">Closet - Bypass door (Interior)</option>
+                <option value="Barn door (Interior)">Barn door (Interior)</option>
+                <option value="Bi-fold door (Interior)">Bi-fold door (Interior)</option>
+            </select>
+        </div>
+
+        <button id="getResultsBtn" onclick="getResults()" class="hidden">Get Results</button>
+    </div>
+
+    <!-- Results -->
+    <div id="results" class="hidden">
+        <h2>Hardware Results</h2>
+        <div id="resultsList"></div>
+        <button onclick="goBack()">Back to Selection</button>
+        <button onclick="logout()" style="background: #dc3545;">Logout</button>
+    </div>
+
+    <script>
+        const hardwareOptions = {
+            'Allegion': [
+                'Allegion Standard Hardware',
+                'Allegion Economical Hardware', 
+                'Allegion Residential Hardware'
+            ],
+            'Assa Abloy': [
+                'Assa Abloy Standard Hardware',
+                'Assa Abloy Economical Hardware',
+                'Assa Abloy Residential Hardware'
+            ],
+            'Hager': [
+                'Hager Standard Hardware',
+                'Hager Residential Hardware'
+            ],
+            'Best/Dormakaba': [
+                'Best/Dormakaba Standard Hardware',
+                'Best/Dormakaba Economical Hardware',
+                'Best/Dormakaba Residential Hardware'
+            ]
+        };
+
+        function showRegister() {
+            document.getElementById('loginForm').classList.add('hidden');
+            document.getElementById('registerForm').classList.remove('hidden');
+        }
+
+        function showLogin() {
+            document.getElementById('registerForm').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+        }
+
+        async function register() {
+            const fullName = document.getElementById('fullName').value;
+            const email = document.getElementById('email').value;
+            const username = document.getElementById('regUsername').value;
+            const password = document.getElementById('regPassword').value;
+
+            if (!fullName || !email || !username || !password) {
+                document.getElementById('registerError').textContent = 'All fields are required';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/register', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ fullName, email, username, password })
+                });
+
+                if (response.ok) {
+                    document.getElementById('registerSuccess').textContent = 'Registration successful! Please login.';
+                    setTimeout(() => showLogin(), 2000);
+                } else {
+                    const error = await response.json();
+                    document.getElementById('registerError').textContent = error.message;
+                }
+            } catch (error) {
+                document.getElementById('registerError').textContent = 'Registration failed. Please try again.';
+            }
+        }
+
+        async function login() {
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+
+            if (!username || !password) {
+                document.getElementById('loginError').textContent = 'Username and password are required';
+                return;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ username, password })
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    localStorage.setItem('token', data.token);
+                    document.getElementById('loginForm').classList.add('hidden');
+                    document.getElementById('selectionForm').classList.remove('hidden');
+                } else {
+                    document.getElementById('loginError').textContent = 'Invalid credentials';
+                }
+            } catch (error) {
+                document.getElementById('loginError').textContent = 'Login failed. Please try again.';
+            }
+        }
+
+        function updateHardware() {
+            const brand = document.getElementById('brand').value;
+            const hardwareSelect = document.getElementById('hardware');
+            const hardwareStep = document.getElementById('hardwareStep');
+            const locationStep = document.getElementById('locationStep');
+            const getResultsBtn = document.getElementById('getResultsBtn');
+
+            hardwareSelect.innerHTML = '<option value="">Choose hardware type...</option>';
+            
+            if (brand && hardwareOptions[brand]) {
+                hardwareOptions[brand].forEach(option => {
+                    hardwareSelect.innerHTML += `<option value="${option}">${option}</option>`;
+                });
+                hardwareStep.classList.remove('hidden');
+            } else {
+                hardwareStep.classList.add('hidden');
+                locationStep.classList.add('hidden');
+                getResultsBtn.classList.add('hidden');
+            }
+        }
+
+        function checkLocation() {
+            const brand = document.getElementById('brand').value;
+            const hardware = document.getElementById('hardware').value;
+            const locationStep = document.getElementById('locationStep');
+            const getResultsBtn = document.getElementById('getResultsBtn');
+
+            if (hardware) {
+                if (brand === 'Allegion') {
+                    locationStep.classList.remove('hidden');
+                } else {
+                    locationStep.classList.add('hidden');
+                    getResultsBtn.classList.remove('hidden');
+                }
+            }
+
+            if (brand === 'Allegion' && hardware && document.getElementById('location').value) {
+                getResultsBtn.classList.remove('hidden');
+            }
+        }
+
+        document.getElementById('location').addEventListener('change', function() {
+            if (this.value) {
+                document.getElementById('getResultsBtn').classList.remove('hidden');
+            }
+        });
+
+        async function getResults() {
+            const brand = document.getElementById('brand').value;
+            const hardwareType = document.getElementById('hardware').value;
+            const location = document.getElementById('location').value;
+
+            const requestData = { brand, hardwareType };
+            if (brand === 'Allegion') {
+                requestData.location = location;
+            }
+
+            try {
+                const response = await fetch('http://localhost:5000/api/data/fetch', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestData)
+                });
+
+                const results = await response.json();
+                displayResults(results, requestData);
+            } catch (error) {
+                displayResults([], requestData);
+            }
+        }
+
+        function displayResults(results, selection) {
+            document.getElementById('selectionForm').classList.add('hidden');
+            document.getElementById('results').classList.remove('hidden');
+
+            let html = `<p><strong>Your Selection:</strong></p>
+                       <p>Brand: ${selection.brand}</p>
+                       <p>Hardware Type: ${selection.hardwareType}</p>`;
+            
+            if (selection.location) {
+                html += `<p>Location: ${selection.location}</p>`;
+            }
+
+            if (results.length > 0) {
+                html += `<h3>Found ${results.length} matching items:</h3>`;
+                results.forEach((item, index) => {
+                    html += `<div class="result-item">
+                        <h4>Hardware Item ${index + 1}</h4>
+                        <p><strong>Description:</strong> ${item.description || 'N/A'}</p>
+                        <p><strong>Part Number:</strong> ${item.partNumber || 'N/A'}</p>
+                        <p><strong>Specifications:</strong> ${item.specifications || 'N/A'}</p>
+                    </div>`;
+                });
+            } else {
+                html += `<div class="result-item">
+                    <h4>Sample Result</h4>
+                    <p><strong>Description:</strong> ${selection.hardwareType} for ${selection.brand}</p>
+                    <p><strong>Part Number:</strong> ${selection.brand.toUpperCase()}-${Math.floor(Math.random() * 1000)}</p>
+                    <p><strong>Specifications:</strong> Standard specifications for ${selection.hardwareType}</p>
+                </div>`;
+            }
+
+            document.getElementById('resultsList').innerHTML = html;
+        }
+
+        function goBack() {
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('selectionForm').classList.remove('hidden');
+        }
+
+        function logout() {
+            localStorage.removeItem('token');
+            document.getElementById('selectionForm').classList.add('hidden');
+            document.getElementById('results').classList.add('hidden');
+            document.getElementById('loginForm').classList.remove('hidden');
+            
+            // Reset forms
+            document.getElementById('brand').value = '';
+            document.getElementById('hardware').innerHTML = '<option value="">Choose hardware type...</option>';
+            document.getElementById('location').value = '';
+            document.getElementById('hardwareStep').classList.add('hidden');
+            document.getElementById('locationStep').classList.add('hidden');
+            document.getElementById('getResultsBtn').classList.add('hidden');
+        }
+    </script>
+</body>
+</html>

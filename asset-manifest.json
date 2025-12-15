@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/hardware-selection-system/static/css/main.9f414307.css",
+    "main.js": "/hardware-selection-system/static/js/main.92736631.js",
+    "index.html": "/hardware-selection-system/index.html",
+    "main.9f414307.css.map": "/hardware-selection-system/static/css/main.9f414307.css.map",
+    "main.92736631.js.map": "/hardware-selection-system/static/js/main.92736631.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.9f414307.css",
+    "static/js/main.92736631.js"
+  ]
+}
