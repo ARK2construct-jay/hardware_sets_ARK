@@ -10,7 +10,6 @@ client/node_modules/
 .env.production.local
 
 # Build outputs
-client/build/
 build/
 dist/
 
