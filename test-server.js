@@ -6,23 +6,21 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-app.get('/', (req, res) => {
-  res.json({ message: 'Test server is running!' });
-});
-
-app.post('/api/auth/login', (req, res) => {
-  res.json({ token: 'test-token', user: { username: 'test' } });
-});
-
+// Test registration without database
 app.post('/api/auth/register', (req, res) => {
-  res.json({ message: 'Registration successful' });
+  console.log('Registration request:', req.body);
+  res.json({ message: 'Registration successful!' });
 });
 
-app.post('/api/data/fetch', (req, res) => {
-  res.json([{ description: 'Test Hardware', brand: req.body.brand }]);
+// Test login
+app.post('/api/auth/login', (req, res) => {
+  console.log('Login request:', req.body);
+  res.json({ 
+    token: 'test-token',
+    user: { username: req.body.username }
+  });
 });
 
-const PORT = 5000;
-app.listen(PORT, () => {
-  console.log(`Test server running on http://localhost:${PORT}`);
+app.listen(5001, () => {
+  console.log('Test server running on port 5001');
 });

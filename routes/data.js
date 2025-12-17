@@ -9,24 +9,39 @@ router.post('/fetch', async (req, res) => {
     const { brand, hardwareType, location } = req.body;
     console.log('\n=== NEW QUERY ===');
     console.log('Query inputs:', { brand, hardwareType, location });
+    console.log('Brand type:', typeof brand);
+    console.log('Hardware type:', typeof hardwareType);
+    console.log('Location type:', typeof location);
     
-    // Only use 3 input fields for filtering
-    let query = { brand, hardwareType };
-    console.log('Initial query:', query);
-    console.log('Brand check:', brand);
-    console.log('Location check:', location);
-    console.log('Brand === Best/Dormakaba:', brand === 'Best/Dormakaba');
-    console.log('Location exists:', !!location);
+    // Build query based on user selection
+    let query = {};
     
-    if ((brand === 'Allegion' || brand === 'Assa Abloy' || brand === 'Best/Dormakaba' || brand === 'Hager' || brand === 'PDQ-Cal Royal') && location) {
-      query.location = location;
-      console.log('Location added to query - Final query:', query);
-    } else {
-      console.log('Location NOT added to query - Final query:', query);
+    if (brand) {
+      query.brand = brand;
     }
+    
+    if (hardwareType) {
+      query.hardwareType = hardwareType;
+    }
+    
+    if (location && (brand === 'Allegion' || brand === 'Assa Abloy' || brand === 'Best/Dormakaba' || brand === 'Hager' || brand === 'PDQ-Cal Royal' || brand === 'ABB')) {
+      query.location = location;
+    }
+    
+    console.log('Final query:', query);
     
     const results = await AllegionSet.find(query);
     console.log(`Found ${results.length} results`);
+    
+    if (results.length > 0) {
+      console.log('Sample result fields:', Object.keys(results[0].toObject()));
+      console.log('First result:', {
+        brand: results[0].brand,
+        hardwareType: results[0].hardwareType,
+        location: results[0].location,
+        hardwareDescription: results[0].hardwareDescription
+      });
+    }
     
     // Define table headers based on hardware type
     let tableHeaders = [];
@@ -96,6 +111,20 @@ router.post('/fetch', async (req, res) => {
         'Economical grade'
       ];
     } else if (hardwareType === 'PDQ-Cal Royal Residential Hardware') {
+      tableHeaders = [
+        'Hardware Description',
+        'Manufacture',
+        'Model Number'
+      ];
+    } else if (hardwareType === 'ABB Standard Hardware' || hardwareType === 'ABB Economical Hardware') {
+      tableHeaders = [
+        'Hardware Description',
+        'Manufacture', 
+        'Grade 1',
+        'Grade 2',
+        'Economical grade'
+      ];
+    } else if (hardwareType === 'ABB Residential Hardware') {
       tableHeaders = [
         'Hardware Description',
         'Manufacture',

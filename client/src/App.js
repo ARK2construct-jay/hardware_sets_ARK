@@ -50,6 +50,8 @@ function App() {
             element={isAuthenticated ? <ResultPage key={refreshKey} /> : <Navigate to="/login" replace />} 
           />
           <Route path="/" element={<Navigate to={isAuthenticated ? "/main" : "/login"} replace />} />
+          <Route path="/hardware-selection-system" element={<Navigate to={isAuthenticated ? "/main" : "/login"} replace />} />
+          <Route path="*" element={<Navigate to={isAuthenticated ? "/main" : "/login"} replace />} />
         </Routes>
       </div>
     </Router>

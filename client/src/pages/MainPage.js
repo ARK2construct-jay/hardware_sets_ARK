@@ -95,7 +95,7 @@ function MainPage() {
     const selectionData = {
       brand: selectedBrand,
       hardwareType: selectedHardware,
-      location: (selectedBrand === 'Allegion' || selectedBrand === 'Best/Dormakaba' || selectedBrand === 'Hager' || selectedBrand === 'PDQ-Cal Royal') ? selectedLocation : null
+      location: (selectedBrand === 'Allegion' || selectedBrand === 'Assa Abloy' || selectedBrand === 'Best/Dormakaba' || selectedBrand === 'Hager' || selectedBrand === 'PDQ-Cal Royal') ? selectedLocation : null
     };
     
     localStorage.setItem('selectionData', JSON.stringify(selectionData));
@@ -123,18 +123,24 @@ function MainPage() {
   };
 
   const canSubmit = selectedBrand && selectedHardware && 
-    ((selectedBrand !== 'Allegion' && selectedBrand !== 'Best/Dormakaba' && selectedBrand !== 'Hager' && selectedBrand !== 'PDQ-Cal Royal') || selectedLocation);
+    ((selectedBrand === 'Assa Abloy') || selectedLocation);
 
   return (
-    <div className="selection-container">
-      <button onClick={handleLogout} className="btn logout-btn">
-        Logout
-      </button>
+    <>
+      {/* Floating hardware elements */}
+      <div className="hardware-float hardware-float-1"></div>
+      <div className="hardware-float hardware-float-2"></div>
+      <div className="hardware-float hardware-float-3"></div>
       
-      <h2>Hardware Selection</h2>
+      <div className="selection-container">
+        <button onClick={handleLogout} className="btn logout-btn">
+          🚀 Logout
+        </button>
+        
+        <h2>🔧 Hardware Selection System</h2>
       
       <div className="step">
-        <h3>Step 1: Select Brand</h3>
+        <h3>🏢 Step 1: Select Brand</h3>
         <div className="form-group">
           <select value={selectedBrand} onChange={handleBrandChange}>
             <option value="">Choose a brand...</option>
@@ -145,47 +151,45 @@ function MainPage() {
         </div>
       </div>
 
-      {selectedBrand && (
-        <div className="step">
-          <h3>Step 2: Select Hardware Type</h3>
-          <div className="form-group">
-            <select 
-              value={selectedHardware} 
-              onChange={(e) => setSelectedHardware(e.target.value)}
-            >
-              <option value="">Choose hardware type...</option>
-              {hardwareOptions[selectedBrand].map(hardware => (
-                <option key={hardware} value={hardware}>{hardware}</option>
-              ))}
-            </select>
-          </div>
+      <div className="step">
+        <h3>🔩 Step 2: Select Hardware Type</h3>
+        <div className="form-group">
+          <select 
+            value={selectedHardware} 
+            onChange={(e) => setSelectedHardware(e.target.value)}
+            disabled={!selectedBrand}
+          >
+            <option value="">Choose hardware type...</option>
+            {selectedBrand && hardwareOptions[selectedBrand].map(hardware => (
+              <option key={hardware} value={hardware}>{hardware}</option>
+            ))}
+          </select>
         </div>
-      )}
+      </div>
 
-      {(selectedBrand === 'Allegion' || selectedBrand === 'Best/Dormakaba' || selectedBrand === 'Hager' || selectedBrand === 'PDQ-Cal Royal') && selectedHardware && (
-        <div className="step">
-          <h3>Step 3: Select Location</h3>
-          <div className="form-group">
-            <select 
-              value={selectedLocation} 
-              onChange={(e) => setSelectedLocation(e.target.value)}
-            >
-              <option value="">Choose location...</option>
-              {locations.map(location => (
-                <option key={location} value={location}>{location}</option>
-              ))}
-            </select>
-          </div>
+      <div className="step">
+        <h3>📍 Step 3: Select Location</h3>
+        <div className="form-group">
+          <select 
+            value={selectedLocation} 
+            onChange={(e) => setSelectedLocation(e.target.value)}
+            disabled={!selectedBrand || !selectedHardware}
+          >
+            <option value="">Choose location...</option>
+            {locations.map(location => (
+              <option key={location} value={location}>{location}</option>
+            ))}
+          </select>
         </div>
-      )}
+      </div>
 
       {canSubmit && (
         <button onClick={handleSubmit} className={`btn ${loading ? 'loading' : ''}`} disabled={loading}>
-          {loading ? 'Loading Results...' : 'Get Results'}
+          {loading ? '🔄 Loading Results...' : '🔍 Get Results'}
         </button>
       )}
-    </div>
-  );
+      </div>
+    </>);
 }
 
 export default MainPage;

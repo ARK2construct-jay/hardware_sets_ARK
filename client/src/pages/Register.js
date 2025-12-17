@@ -26,9 +26,8 @@ function Register() {
 
     try {
       const axiosInstance = axios.create({
-        baseURL: process.env.NODE_ENV === 'production' 
-          ? 'https://hardware-selection-system.onrender.com' 
-          : 'http://localhost:5000'
+        baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+        timeout: 10000
       });
       await axiosInstance.post('/api/auth/register', formData);
       setSuccess('Registration successful! Redirecting to login...');
@@ -41,8 +40,14 @@ function Register() {
   };
 
   return (
-    <div className="form-container">
-      <h2>Register</h2>
+    <>
+      {/* Floating hardware elements */}
+      <div className="hardware-float hardware-float-1"></div>
+      <div className="hardware-float hardware-float-2"></div>
+      <div className="hardware-float hardware-float-3"></div>
+      
+      <div className="form-container">
+        <h2>📝 Create Account</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Full Name:</label>
@@ -87,14 +92,14 @@ function Register() {
         <button type="submit" className="btn" disabled={loading}>
           {loading ? 'Registering...' : 'Register'}
         </button>
-        {error && <div className="error">{error}</div>}
-        {success && <div className="success">{success}</div>}
+        {error && <div className="error-message">{error}</div>}
+        {success && <div className="success-message">{success}</div>}
       </form>
-      <p style={{marginTop: '20px'}}>
-        Already have an account? <Link to="/login">Login here</Link>
-      </p>
-    </div>
-  );
+        <p style={{marginTop: '20px', textAlign: 'center'}}>
+          Already have an account? <Link to="/login" style={{color: '#667eea', textDecoration: 'none', fontWeight: '600'}}>Login here</Link>
+        </p>
+      </div>
+    </>);
 }
 
 export default Register;

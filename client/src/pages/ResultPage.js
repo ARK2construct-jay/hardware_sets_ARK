@@ -19,8 +19,9 @@ function ResultPage() {
 
         const axiosInstance = axios.create({
           baseURL: process.env.NODE_ENV === 'production' 
-            ? 'https://hardware-selection-system.onrender.com' 
-            : 'http://localhost:5000'
+            ? process.env.REACT_APP_API_URL 
+            : 'http://localhost:5000',
+          timeout: 10000
         });
         const response = await axiosInstance.post('/api/data/fetch', selectionData);
         setResults(response.data);
@@ -45,23 +46,36 @@ function ResultPage() {
     navigate('/login');
   };
 
-  if (loading) return <div>Loading results...</div>;
+  if (loading) {
+    return (
+      <div className="loading-container">
+        <div className="loading-spinner"></div>
+        <div>Loading hardware results...</div>
+      </div>
+    );
+  }
 
   return (
-    <div className="results-container">
-      <button onClick={handleLogout} className="btn logout-btn">
-        Logout
-      </button>
+    <>
+      {/* Floating hardware elements */}
+      <div className="hardware-float hardware-float-1"></div>
+      <div className="hardware-float hardware-float-2"></div>
+      <div className="hardware-float hardware-float-3"></div>
       
-      <h2>Hardware Results</h2>
+      <div className="results-container">
+        <button onClick={handleLogout} className="btn logout-btn">
+          🚀 Logout
+        </button>
+        
+        <h2>📈 Hardware Results</h2>
       
-      {error && <div className="error">{error}</div>}
+      {error && <div className="error-message">{error}</div>}
       
       {!results.tableData || results.tableData.length === 0 ? (
         <div>
           <p>No results found for your selection.</p>
           <button onClick={handleBack} className="btn">
-            Back to Selection
+            ← Back to Selection
           </button>
         </div>
       ) : (
@@ -78,33 +92,48 @@ function ResultPage() {
                 </tr>
               </thead>
               <tbody>
-                {results.tableData.map((item, index) => (
-                  <tr key={index}>
-                    <td>{item.hardwareDescription || item['Hardware Description'] || ''}</td>
-                    <td>{item.Manufacture || ''}</td>
-                    {results.tableHeaders.includes('Grade 1') && <td>{item['Grade 1'] || ''}</td>}
-                    {results.tableHeaders.includes('Grade 2') && <td>{item['Grade 2'] || ''}</td>}
-                    {results.tableHeaders.includes('Economical grade') && <td>{item['Economical grade'] || ''}</td>}
-                    {results.tableHeaders.includes('Model Number') && <td>{item['Model Number'] || ''}</td>}
-                  </tr>
-                ))}
+                {results.tableData.map((item, index) => {
+                  const highlightKeywords = [
+                    'hinge', 'exit device', 'closer', 'entry lock', 'manual flushbolt',
+                    'storeroom lock', 'entry/office lock', 'automatic flush bolts',
+                    'privacy lock', 'passage lock', 'spring hinge', 'viewer',
+                    'ball catch', 'cylinder only deadbolt', 'deadbolt',
+                    'double acting hinge', 'edge pull', 'flush pull'
+                  ];
+                  
+                  const shouldHighlight = item.hardwareDescription && 
+                    highlightKeywords.some(keyword => 
+                      item.hardwareDescription.toLowerCase().includes(keyword.toLowerCase())
+                    );
+                  
+                  return (
+                    <tr key={index} style={shouldHighlight ? {backgroundColor: '#d4edda', border: '2px solid #28a745'} : {}}>
+                      <td>{item.hardwareDescription || item['Hardware Description'] || ''}</td>
+                      <td>{item.Manufacture || ''}</td>
+                      {results.tableHeaders.includes('Grade 1') && <td>{item['Grade 1'] || ''}</td>}
+                      {results.tableHeaders.includes('Grade 2') && <td>{item['Grade 2'] || ''}</td>}
+                      {results.tableHeaders.includes('Economical grade') && <td>{item['Economical grade'] || ''}</td>}
+                      {results.tableHeaders.includes('Model Number') && <td>{item['Model Number'] || ''}</td>}
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>
           
-          <div className="note-container" style={{marginTop: '20px', padding: '15px', backgroundColor: '#f8f9fa', border: '1px solid #dee2e6', borderRadius: '4px'}}>
-            <p style={{margin: '0', fontStyle: 'italic', color: '#6c757d'}}>
-              <strong>Note:</strong> The highlighted products require prep in the door/frame.
+          <div className="note-container" style={{marginTop: '20px', padding: '15px', backgroundColor: '#d4edda', border: '1px solid #28a745', borderRadius: '4px'}}>
+            <p style={{margin: '0', fontStyle: 'italic', color: '#155724'}}>
+              <strong>Note:</strong> The highlighted products are key hardware items.
             </p>
           </div>
           
           <button onClick={handleBack} className="btn" style={{marginTop: '20px'}}>
-            Back to Selection
+            ← Back to Selection
           </button>
         </div>
       )}
-    </div>
-  );
+      </div>
+    </>);
 }
 
 export default ResultPage;

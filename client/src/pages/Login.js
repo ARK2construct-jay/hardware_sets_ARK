@@ -28,10 +28,8 @@ function Login() {
 
     // Create axios instance with timeout
     const axiosInstance = axios.create({
-      timeout: 10000, // 10 second timeout
-      baseURL: process.env.NODE_ENV === 'production' 
-        ? 'https://hardware-selection-system.onrender.com' 
-        : 'http://localhost:5000'
+      baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+      timeout: 10000
     });
 
     try {
@@ -71,8 +69,14 @@ function Login() {
   }
 
   return (
-    <div className="form-container">
-      <h2>Login</h2>
+    <>
+      {/* Floating hardware elements */}
+      <div className="hardware-float hardware-float-1"></div>
+      <div className="hardware-float hardware-float-2"></div>
+      <div className="hardware-float hardware-float-3"></div>
+      
+      <div className="form-container">
+        <h2>🔐 Hardware Login</h2>
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Username:</label>
@@ -99,11 +103,11 @@ function Login() {
         </button>
         {error && <div className="error-message">{error}</div>}
       </form>
-      <p style={{marginTop: '20px'}}>
-        Don't have an account? <Link to="/register">Register here</Link>
-      </p>
-    </div>
-  );
+        <p style={{marginTop: '20px', textAlign: 'center'}}>
+          Don't have an account? <Link to="/register" style={{color: '#667eea', textDecoration: 'none', fontWeight: '600'}}>Register here</Link>
+        </p>
+      </div>
+    </>);
 }
 
 export default Login;

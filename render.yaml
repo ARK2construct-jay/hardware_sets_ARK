@@ -2,15 +2,16 @@ services:
   - type: web
     name: hardware-selection-backend
     env: node
-    plan: free
     buildCommand: npm install
-    startCommand: node server.js
+    startCommand: npm start
     envVars:
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI
-        value: mongodb+srv://username:password@hardware-selection.dcnpff4.mongodb.net/hardware_selection
+        fromDatabase:
+          name: hardware-db
+          property: connectionString
       - key: JWT_SECRET
-        value: hardwareSelectionSecretKey2024ProjectFinal
+        generateValue: true
       - key: PORT
         value: 10000
