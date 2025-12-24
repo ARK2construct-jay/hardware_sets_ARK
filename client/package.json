@@ -17,7 +17,7 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
-  "proxy": "https://hardware-selection-system.onrender.com",
+  "proxy": "http://localhost:5000",
   "browserslist": {
     "production": [
       ">0.2%",
