@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import config from '../config';
 
 function Login() {
   const [formData, setFormData] = useState({ username: '', password: '' });
@@ -30,7 +31,7 @@ function Login() {
 
     // Create axios instance with timeout
     const axiosInstance = axios.create({
-      baseURL: 'http://localhost:5000',
+      baseURL: config.API_BASE_URL,
       timeout: 10000
     });
 

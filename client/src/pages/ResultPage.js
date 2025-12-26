@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import config from '../config';
 
 function ResultPage() {
   const [results, setResults] = useState([]);
@@ -18,9 +19,7 @@ function ResultPage() {
         }
 
         const axiosInstance = axios.create({
-          baseURL: process.env.NODE_ENV === 'production' 
-            ? process.env.REACT_APP_API_URL 
-            : 'http://localhost:5000',
+          baseURL: config.API_BASE_URL,
           timeout: 10000
         });
         const response = await axiosInstance.post('/api/data/fetch', selectionData);

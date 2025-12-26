@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import config from '../config';
 
 function ResetPassword() {
   const [formData, setFormData] = useState({ username: '', email: '', newPassword: '', confirmPassword: '' });
@@ -34,7 +35,7 @@ function ResetPassword() {
     }
 
     try {
-      const response = await axios.post('/api/auth/reset-password', {
+      const response = await axios.post(`${config.API_BASE_URL}/api/auth/reset-password`, {
         username: formData.username,
         email: formData.email,
         newPassword: formData.newPassword

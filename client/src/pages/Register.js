@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import config from '../config';
 
 function Register() {
   const [formData, setFormData] = useState({
@@ -26,7 +27,7 @@ function Register() {
 
     try {
       const axiosInstance = axios.create({
-        baseURL: process.env.REACT_APP_API_URL || 'http://localhost:5000',
+        baseURL: config.API_BASE_URL,
         timeout: 10000
       });
       await axiosInstance.post('/api/auth/register', formData);

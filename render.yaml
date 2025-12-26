@@ -1,17 +1,16 @@
 services:
   - type: web
-    name: hardware-selection-backend
+    name: hardware-sets-ark-backend
     env: node
+    plan: free
     buildCommand: npm install
-    startCommand: npm start
+    startCommand: node server.js
     envVars:
       - key: NODE_ENV
         value: production
       - key: MONGODB_URI
-        fromDatabase:
-          name: hardware-db
-          property: connectionString
+        value: mongodb+srv://support_db_user:Ark%402811@hardware-selection.dcnpff4.mongodb.net/hardware_selection?retryWrites=true&w=majority&appName=hardware-selection
       - key: JWT_SECRET
-        generateValue: true
+        value: hardwareSelectionSecretKey2024ProjectFinal
       - key: PORT
         value: 10000
