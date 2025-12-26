@@ -23,7 +23,8 @@ app.use(cors({
     'http://127.0.0.1:3000', 
     'http://127.0.0.1:3001',
     'https://hardware-sets-ark.netlify.app',
-    'https://main--hardware-sets-ark.netlify.app'
+    'https://main--hardware-sets-ark.netlify.app',
+    'https://symphonious-monstera-3892cf.netlify.app'
   ],
   methods: ['GET', 'POST', 'PUT', 'DELETE'],
   allowedHeaders: ['Content-Type', 'Authorization'],
